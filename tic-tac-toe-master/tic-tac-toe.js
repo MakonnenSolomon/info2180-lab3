@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // excercise 3
+
 squares.forEach((square, index) => {
     square.addEventListener('click', () => {
         if (!gameState[index]) {
@@ -59,4 +60,55 @@ squares.forEach((square, index) => {
     square.addEventListener('mouseout', () => {
         square.classList.remove('hover');
     });
+});
+
+
+// excercise 4
+
+const status = document.getElementById('status');
+
+function checkWinner() {
+    const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],  // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],  // Columns
+        [0, 4, 8], [2, 4, 6]              // Diagonals
+    ];
+
+    for (const combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+            statusElement.textContent = `Congratulations! ${gameState[a]} is the Winner!`;
+            statusElement.classList.add('you-won');
+            return true;
+        }
+    }
+    return false;
+}
+
+squares.forEach((square, index) => {
+    square.addEventListener('click', () => {
+        if (!gameState[index]) {
+            gameState[index] = currentPlayer;
+            square.textContent = currentPlayer;
+            square.classList.add(currentPlayer);
+
+            if (!checkWinner()) {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+    });
+});
+
+
+// excercise 5
+document.getElementById('new-game').addEventListener('click', () => {
+    gameState.fill(null);
+    squares.forEach(square => {
+        square.textContent = '';
+        square.classList.remove('X', 'O');
+    });
+
+    statusElement.textContent = 'Move your mouse over a square and click to play an X or an O.';
+    statusElement.classList.remove('you-won');
+    currentPlayer = 'X';
 });
