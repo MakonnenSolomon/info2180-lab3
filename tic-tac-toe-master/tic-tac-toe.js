@@ -1,114 +1,145 @@
-// excercise 1
+// Exercise 1: Layout the board
 
-// awaits the DOM to load fully
-document.addEventListener('DOMcontentLoaded', ()=>
-{
-    //select all the div elements inside the game board
+
+// Ensure the DOM is fully loaded before running the script
+document.addEventListener('DOMContentLoaded', () => {
+    // Select all the squares on the board
     const squares = document.querySelectorAll('#board div');
-    // starting player uses "x"
-    let currentPlayer = 'X';
-    // track the game progress
-    const gameState = Array(9).fill(null);
 
-    //loop through the squares and add "square" class
-    squares.forEach
-    ((square, index) =>
-
-        {
-            square.classList.add('square');
-        }
-    );
+    // Add the 'square' class to each square
+    squares.forEach(square => {
+        square.classList.add('square');
+    });
 });
 
-// excercise 2
+
+// Exercise 2: Add X or O to a square when clicked
 
 document.addEventListener('DOMContentLoaded', () => {
     const squares = document.querySelectorAll('#board div');
-    let currentPlayer = 'X';
-    const gameState = Array(9).fill(null);
+    let currentPlayer = 'X'; // Starting with player 'X'
 
-    squares.forEach((square, index) => {
-        square.addEventListener('click', () => {
-            if (!gameState[index]) {  // Check if square is empty
-                gameState[index] = currentPlayer;
+    squares.forEach(square => {
+        square.addEventListener('click', () => 
+            {
+            if (!square.textContent) {  // Check if the square is empty
                 square.textContent = currentPlayer;
-                square.classList.add(currentPlayer);
+                square.classList.add(currentPlayer);  // Add class 'X' or 'O' for styling
 
+                // Switch to the other player
                 currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
             }
         });
     });
 });
 
-// excercise 3
 
-squares.forEach((square, index) => {
-    square.addEventListener('click', () => {
-        if (!gameState[index]) {
-            gameState[index] = currentPlayer;
-            square.textContent = currentPlayer;
-            square.classList.add(currentPlayer);
+// Exercise 3: Change style when mouse moves over a square
 
-            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        }
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    const squares = document.querySelectorAll('#board div');
 
-    square.addEventListener('mouseover', () => {
-        square.classList.add('hover');
-    });
-
-    square.addEventListener('mouseout', () => {
-        square.classList.remove('hover');
-    });
-});
-
-
-// excercise 4
-
-const status = document.getElementById('status');
-
-function checkWinner() {
-    const winningCombinations = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],  // Rows
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],  // Columns
-        [0, 4, 8], [2, 4, 6]              // Diagonals
-    ];
-
-    for (const combination of winningCombinations) {
-        const [a, b, c] = combination;
-        if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
-            statusElement.textContent = `Congratulations! ${gameState[a]} is the Winner!`;
-            statusElement.classList.add('you-won');
-            return true;
-        }
-    }
-    return false;
-}
-
-squares.forEach((square, index) => {
-    square.addEventListener('click', () => {
-        if (!gameState[index]) {
-            gameState[index] = currentPlayer;
-            square.textContent = currentPlayer;
-            square.classList.add(currentPlayer);
-
-            if (!checkWinner()) {
-                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-            }
-        }
-    });
-});
-
-
-// excercise 5
-document.getElementById('new-game').addEventListener('click', () => {
-    gameState.fill(null);
     squares.forEach(square => {
-        square.textContent = '';
-        square.classList.remove('X', 'O');
-    });
+        // Add hover effect
+        square.addEventListener('mouseover', () => {
+            square.classList.add('hover');
+        });
 
-    statusElement.textContent = 'Move your mouse over a square and click to play an X or an O.';
-    statusElement.classList.remove('you-won');
-    currentPlayer = 'X';
+        // Remove hover effect when the mouse leaves
+        square.addEventListener('mouseout', () => {
+            square.classList.remove('hover');
+        });
+    });
+});
+
+
+// Exercise 4: Check for the winner and update the status
+
+document.addEventListener('DOMContentLoaded', () => {
+    const squares = document.querySelectorAll('#board div');
+    const statusDiv = document.getElementById('status');
+    let currentPlayer = 'X';
+    let gameActive = true;
+
+    // Function to check if a player has won
+    const checkWinner = () => {
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6]             // Diagonals
+        ];
+
+        for (const combo of winningCombinations) 
+            {
+            const [a, b, c] = combo;
+            if (squares[a].textContent && squares[a].textContent === squares[b].textContent && squares[a].textContent === squares[c].textContent) {
+                gameActive = false;
+                statusDiv.textContent = `Congratulations! ${squares[a].textContent} is the Winner!`;
+                statusDiv.classList.add('you-won');
+                return false;
+            }
+            if (squares.every(cell => cell))
+            {
+                return "Draw"
+            }
+        
+        }
+        return;
+    };
+
+    squares.forEach(square => {
+        square.addEventListener('click', () => {
+            if (gameActive && !square.textContent) {
+                square.textContent = currentPlayer;
+                square.classList.add(currentPlayer);
+
+                if (!checkWinner()) {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            }
+        });
+    });
+});
+
+
+//Exercise 5: Restart the game
+
+document.addEventListener('DOMContentLoaded', () => {
+    const squares = document.querySelectorAll('#board div');
+    const statusDiv = document.getElementById('status');
+    const newGameButton = document.querySelector('.btn');
+
+    newGameButton.addEventListener('click', () => {
+        squares.forEach(square => {
+            square.textContent = '';       // Clear the square
+            square.classList.remove('X', 'O'); // Remove X or O class
+        });
+
+        statusDiv.textContent = 'Move your mouse over a square and click to play an X or an O.';
+        statusDiv.classList.remove('you-won');
+        currentPlayer = 'X'; // Reset to player 'X'
+        gameActive = true;   // Reactivate the game
+    });
+});
+
+// Exercise 6: Disallow Cheating
+
+document.addEventListener('DOMContentLoaded', () => {
+    const squares = document.querySelectorAll('#board div');
+    let currentPlayer = 'X';
+    let gameActive = true;
+
+    squares.forEach(square => {
+        square.addEventListener('click', () => {
+            // Only allow move if the square is empty and the game is active
+            if (gameActive && !square.textContent) {
+                square.textContent = currentPlayer;
+                square.classList.add(currentPlayer);
+
+                if (!checkWinner()) {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+            }
+        });
+    });
 });
